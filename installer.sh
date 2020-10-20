@@ -7,6 +7,7 @@ set_variables () {
     git_dracula_gtk="https://github.com/dracula/gtk/archive/master.zip"
     git_dracula_term="https://github.com/dracula/gnome-terminal"
     git_dracula_zsh="https://github.com/dracula/gnome-terminal"
+    git_dracula_vim="https://github.com/dracula/vim.git"
     deb_paper_icons="https://launchpadlibrarian.net/468844787/paper-icon-theme_1.5.728-202003121505~daily~ubuntu18.04.1_all.deb"
     deb_vscode="https://go.microsoft.com/fwlink/?LinkID=760868"
 }
@@ -23,6 +24,7 @@ get_installation () {
     wget -O vscode.deb ${deb_vscode}
     git clone ${git_dracula_term}
     git clone ${git_dracula_zsh}
+    git clone ${git_dracula_vim} dracula_vim
 }
 make_installation () {
     # Move to the Working Directory
@@ -31,7 +33,7 @@ make_installation () {
         # 1. Installing pre-req software
         apt update -y
         apt upgrade -y 
-        apt install git ruby gnome-tweaks gnome-shell-extensions vim zsh dconf-cli curl -y
+        apt install git ruby gnome-tweaks gnome-shell-extensions vim zsh dconf-cli curl tmux -y
     }
     make_installation_gtk () {
         # Install the Dracula GTK Theme
@@ -43,6 +45,7 @@ make_installation () {
         gsettings set org.gnome.desktop.interface gtk-theme Dracula
         gsettings set org.gnome.desktop.wm.preferences theme Dracula
         gsettings set org.gnome.shell.extensions.user-theme name Dracula
+        gsettings set org.gnome.desktop.wm.preferences button-layout :
     }
     make_installation_icons () {
         # Install the Paper Icon Theme
@@ -65,6 +68,16 @@ make_installation () {
         mkdir ~/.oh_my_zsh/themes -d
         ln -s ${themes_dir}/dracula_zsh/dracula.zsh-theme ~/.oh-my-zsh/themes/dracula.zsh-theme
         echo "zsh" >> ~/.bashrc
+    }
+    make_installation_vim () {
+        # Install the Vim theme
+        mkdir -p ~/.vim/pack/themes/start
+        cp ${working_dir}/dracula_vim ~/.vim/pack/themes/start/dracula
+        touch ~/.vimrc
+        echo "packadd! dracula" >> ~/.vimrc  
+        echo "syntax enable" >> ~/.vimrc
+        echo "colorscheme dracula" >> ~/.vimrc
+
     }
     make_installation_spotify () {
         # Install the Spotify app
@@ -89,6 +102,7 @@ make_installation () {
     make_installation_icons
     make_installation_term
     make_installation_zsh
+    make_installation_vim
     make_installation_spotify
     make_installation_vscode
 }
